@@ -26,11 +26,11 @@ jobs:
              # Set the environment to deploy to
              if [[ "$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "length([?trafficWeight=='100'])")" == "1" ]]
               then
-               echo "ENV=green" >> $GITHUB_ENV
+                export ENV=green 
               else
-              echo "ENV=blue" >> $GITHUB_ENV
+                export ENV=blue 
                fi
              # Deploy the new version
              az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }} --set-env-vars $ENV=latest
                 # If tests pass, switch traffic to the new version
-             az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight $ENV=100	
+             az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight $ENV=100	 
