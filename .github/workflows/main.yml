@@ -23,15 +23,21 @@ jobs:
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
         - name: Deploy to Azure Container Apps
           run: |
-            if [[ "$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "length([?trafficWeight=='100'])")" == "1" ]]
-            then
-               export ENV=green
+            # Determine the current environment (blue or green)
+            CURRENT_ENV=$(az containerapp show --name bgdfinal --resource-group ACRforNODEJSapp-RG --query 'properties.activeRevisionName' -o tsv)
+              # Set the new environment based on the current environment
+             if [ "$CURRENT_ENV" == "blue" ]
+             then
+              NEW_ENV="green"
             else
-               export ENV=blue
+             NEW_ENV="blue"
             fi
-            	# Deploy the new version
-             az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }} --set-env-vars revision label=$ENV
-            # Add label to the latest revision
-            az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label $ENV --revision latest
-            # If tests pass, switch traffic to the new version
-            az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight $ENV=100
+             # Deploy the new version to the new environment
+            az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --revision $NEW_ENV --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
+             # Test the new environment...
+
+             # If tests pass, switch traffic to the new environment
+            az containerapp traffic update --name bgdfinal --resource-group ACRforNODEJSapp-RG --revision $NEW_ENV --weight 100
+
+             # Deactivate the old environment
+            az containerapp revision deactivate --name bgdfinal --resource-group ACRforNODEJSapp-RG --revision $CURRENT_ENV
