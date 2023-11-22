@@ -32,6 +32,9 @@ jobs:
                fi
              # Deploy the new version
              az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
+             latest_revision=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?trafficWeight=='100'].name | [0]" --output tsv)
+                # Add label to the latest revision
+             az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label $ENV --revision $latest_revision
              az containerapp revision label add --name bgdfinal --resource-group  ACRforNODEJSapp-RG --label $ENV:latest
              # If tests pass, switch traffic to the new version
              az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight $ENV=100	
