@@ -26,7 +26,8 @@ jobs:
             # Deploy the new version
             export REVISION_NAME=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?trafficWeight=='0'].label" -o tsv)
             echo "Deactivating Revision: $REVISION_NAME"
-            az containerapp revision deactivate -g ACRforNODEJSapp-RG --revision $REVISION_NAME
+            IFS='-' read -r CONTAINER_APP REVISION <<< "$REVISION_NAME"
+            az containerapp revision deactivate -n bgdfinal -g ACRforNODEJSapp-RG --revision $REVISION
             az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
             az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest --yes
             export APP_DOMAIN=$(az containerapp env show -g ACRforNODEJSapp-RG -n managedEnvironment-ACRforNODEJSapp-8fe8 --query properties.defaultDomain -o tsv | tr -d '\r\n')
