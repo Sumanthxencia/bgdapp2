@@ -22,9 +22,9 @@ jobs:
             docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
         - name: Deploy to Azure Container Apps
-             export APP_DOMAIN=$(az containerapp env show -g ACRforNODEJSapp-RG -n managedEnvironment-ACRforNODEJSapp-8fe8 --query properties.defaultDomain -o tsv | tr -d '\r\n')
           run: |
             # Deploy the new version
+            export APP_DOMAIN=$(az containerapp env show -g ACRforNODEJSapp-RG -n managedEnvironment-ACRforNODEJSapp-8fe8 --query properties.defaultDomain -o tsv | tr -d '\r\n')
             az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
             az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest --yes
             curl -s http://$APP_NAME---green.$APP_DOMAIN/api/env | jq | grep COMMIT
