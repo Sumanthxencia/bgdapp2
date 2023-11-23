@@ -25,7 +25,7 @@ jobs:
           run: |
             # Deploy the new version
             az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
-            az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest
-            az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100
-            az containerapp revision label swap --name mycontainerapp --resource-group myresourcegroup --label green --with-label blue
-            az containerapp revision label remove -name bgdfinal --resourse-group ACRforNODEJSapp-RG --label green
+            az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest --yes
+            az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100 --yes
+            az containerapp revision label swap --name mycontainerapp --resource-group myresourcegroup --label green --with-label blue --es
+            az containerapp revision label remove -name bgdfinal --resourse-group ACRforNODEJSapp-RG --label green --yes
