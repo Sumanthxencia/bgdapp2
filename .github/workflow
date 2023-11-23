@@ -23,20 +23,11 @@ jobs:
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
 - name: Deploy to Azure Container Apps
       run: |
-        # Set the environment to deploy to
-        if [[ "$(az containerapp revision list --name myapp --resource-group mygroup --query "length([?trafficWeight=='100'])")" == "1" ]]
-        then
-          ENV="green"
-        else
-          ENV="blue"
-        fi
-
-        # Deploy the new version
+        
+       # Deploy the new version
         az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
-
-        # Test the new version
-        # Add your testing steps here
-
-        # If tests pass, switch traffic to the new version
-        az containerapp revision traffic update --name bgdfinal --resource-group ACRforNODEJSapp-RG --revision $ENV --weight 100
+        az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest
+        az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100
+        az containerapp revision label swap --name mycontainerapp --resource-group myresourcegroup --label green --with-label blue
+        az containerapp revision label remove -name bgdfinal --resourse-group ACRforNODEJSapp-RG --label green
 
