@@ -23,8 +23,7 @@ jobs:
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
 - name: Deploy to Azure Container Apps
       run: |
-        
-       # Deploy the new version
+         # Deploy the new version
         az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
         az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest
         az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100
