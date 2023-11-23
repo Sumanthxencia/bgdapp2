@@ -27,8 +27,7 @@ jobs:
             export REVISION_NAME=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?trafficWeight=='0'].name" -o tsv)
             echo "Deactivating Revision: $REVISION_NAME"
             if [ -n "$REVISION_NAME" ]; then
-            REVISION=$(echo "$REVISION_NAME" | cut -d'-' -f2)
-            az containerapp revision deactivate -n bgdfinal -g ACRforNODEJSapp-RG --revision $REVISION
+            az containerapp revision deactivate -n bgdfinal -g ACRforNODEJSapp-RG --revision $REVISION_NAME
             else
              echo "No revision found with a traffic weight of 0. Nothing to deactivate."
             fi
