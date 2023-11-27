@@ -1,0 +1,18 @@
+on: [push]
+name: test-app deploy into Azure Container App
+ 
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+        # checkout the repo
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+        - name: 'Login via Azure CLI'
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        - name: Deploy to Azure Container Apps
+          run: |
+           az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100
+           az containerapp revision label swap -n bgdfinal -g ACRforNODEJSapp-RG --source green --target blue
