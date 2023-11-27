@@ -24,6 +24,7 @@ jobs:
         - name: Deploy to Azure Container Apps
           run: |
             # Deploy the new version
+            az containerapp revision label remove -n bgdfinal -g ACRforNODEJSapp-RG --label green
              export REVISION_NAME=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?properties.trafficWeight==\`0\`].name" -o tsv)
               echo "Deactivating Revision: $REVISION_NAME"
                if [ -n "$REVISION_NAME" ]; then
@@ -35,5 +36,5 @@ jobs:
             az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest --yes
             az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100
             az containerapp revision label swap -n bgdfinal -g ACRforNODEJSapp-RG --source green --target blue
-            az containerapp revision label remove -n bgdfinal -g ACRforNODEJSapp-RG --label green
+            
            
