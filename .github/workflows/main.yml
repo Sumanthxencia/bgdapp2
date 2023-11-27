@@ -34,7 +34,6 @@ jobs:
             fi
             az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
             az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest --yes
-            az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100
-            az containerapp revision label swap -n bgdfinal -g ACRforNODEJSapp-RG --source green --target blue
+            
             
            
