@@ -1,5 +1,5 @@
 on: [push]
-name: test-app deploy into Azure Container App
+name: node-app deploy into Azure Container App
  
 jobs:
     build-and-deploy:
