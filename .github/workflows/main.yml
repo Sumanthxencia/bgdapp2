@@ -6,7 +6,6 @@ jobs:
         runs-on: ubuntu-latest
         environment: 
             name: 'Dev'
-            url: ${{ steps.deploy.outputs.url }}
         steps:
         # checkout the repo
         - name: 'Checkout GitHub Action'
@@ -42,7 +41,6 @@ jobs:
         runs-on: ubuntu-latest
         environment: 
             name: 'post approval'
-            url: ${{ steps.deploy.outputs.url }}
         steps:
         - run: echo "Manual approval received"
     post-approval:
