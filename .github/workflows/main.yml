@@ -40,11 +40,18 @@ jobs:
     manual-approval:
         needs: build-and-deploy
         runs-on: ubuntu-latest
-        environment: 
-            name: 'Dev'
-            url: ${{ steps.deploy.outputs.url }}
         steps:
-        - run: echo "Manual approval received"
+        - name: Manual approval
+          uses: trstringer/manual-approval@v1
+          with:
+            secret: ${{ github.TOKEN }}
+            approvers: Sumanth N
+            minimum-approvals: 1
+            issue-title: "Deploying v1.3.5 to prod from staging"
+            issue-body: "Please approve or deny the deployment of version v1.3.5."
+            exclude-workflow-initiator-as-approver: false
+            additional-approved-words: ''
+            additional-denied-words: ''
     post-approval:
         needs: manual-approval
         runs-on: ubuntu-latest
