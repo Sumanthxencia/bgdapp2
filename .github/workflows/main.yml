@@ -35,7 +35,8 @@ jobs:
             echo "No revision found with a traffic weight of 0. Nothing to deactivate."
             fi
             az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
-            az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision latest --yes
+            export REVISION=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?properties.trafficWeight==\`0\`].name" -o tsv)
+            az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision REVISION
     manual-approval:
         needs: build-and-deploy
         runs-on: ubuntu-latest
