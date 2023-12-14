@@ -27,8 +27,8 @@ jobs:
           run: |
            
             az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
-            #export REVISION=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?properties.trafficWeight==\`0\`].name" -o tsv)
-            #az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision $REVISION
+            export REVISION=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?properties.trafficWeight==\`0\`].name" -o tsv)
+            az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision $REVISION
     manual-approval:
         needs: build-and-deploy
         runs-on: ubuntu-latest
