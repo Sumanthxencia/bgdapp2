@@ -25,18 +25,10 @@ jobs:
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
         - name: Deploy to Azure Container Apps
           run: |
-            # Deploy the new version
-            az containerapp revision label remove -n bgdfinal -g ACRforNODEJSapp-RG --label green
-             export REVISION_NAME=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?properties.trafficWeight==\`0\`].name" -o tsv)
-              echo "Deactivating Revision: $REVISION_NAME"
-               if [ -n "$REVISION_NAME" ]; then
-            az containerapp revision deactivate --name bgdfinal --resource-group ACRforNODEJSapp-RG --revision $REVISION_NAME
-              else
-            echo "No revision found with a traffic weight of 0. Nothing to deactivate."
-            fi
+           
             az containerapp update --name bgdfinal --resource-group ACRforNODEJSapp-RG --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/nodeapp2:${{ github.sha }}
-            export REVISION=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?properties.trafficWeight==\`0\`].name" -o tsv)
-            az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision $REVISION
+            #export REVISION=$(az containerapp revision list --name bgdfinal --resource-group ACRforNODEJSapp-RG --query "[?properties.trafficWeight==\`0\`].name" -o tsv)
+            #az containerapp revision label add --name bgdfinal --resource-group ACRforNODEJSapp-RG --label green --revision $REVISION
     manual-approval:
         needs: build-and-deploy
         runs-on: ubuntu-latest
@@ -52,6 +44,6 @@ jobs:
           uses: azure/login@v1
           with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
-        - run: |
-            az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100
-            az containerapp revision label swap -n bgdfinal -g ACRforNODEJSapp-RG --source green --target blue
+        #- run: |
+            #az containerapp ingress traffic set --name bgdfinal --resource-group ACRforNODEJSapp-RG --label-weight green=100
+           # az containerapp revision label swap -n bgdfinal -g ACRforNODEJSapp-RG --source green --target blue
